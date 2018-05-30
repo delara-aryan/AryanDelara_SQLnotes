@@ -55,9 +55,9 @@ public class MyContactApp extends AppCompatActivity {
         while (res.moveToNext()) {
             // Append res column 0,1,2,3 to the buffer - see StringBuffer and Cursor APIs
             // Delimit each of the "appends" with line feed "\n"
-            buffer.append("name " + res.getString(1) + " \n");
-            buffer.append("phone number " + res.getString(2) + " \n");
-            buffer.append("address " + res.getString(3) + " \n");
+            buffer.append("Name: " + res.getString(1) + " \n");
+            buffer.append("Phone number: " + res.getString(2) + " \n");
+            buffer.append("Address: " + res.getString(3) + " \n");
             buffer.append("\n");
         }
 
@@ -77,106 +77,32 @@ public class MyContactApp extends AppCompatActivity {
     public void searchRecord(View view) {
         Log.d("MyContactApp", "MainActivity: launching SearchActivity");
         Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, editName.getText().toString());
-        startActivity(intent);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        String name = editName.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, name);
+        Cursor res = myDb.getAllData();
+
+        if(res.getCount() == 0) {
+            showMessage("Error", "No data found in database");
+            return;
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        boolean contactFound = false;
+        while (res.moveToNext()) {
+            if (res.getString(1).equals(name)) {
+                buffer.append("Name: " + res.getString(1) + " \n");
+                buffer.append("Phone number: " + res.getString(2) + " \n");
+                buffer.append("Address: " + res.getString(3) + " \n");
+                buffer.append("\n");
+                contactFound = true;
+            }
+        }
+
+        if (contactFound == false) {
+            showMessage("Error", "No contact with name " + name + " found in database.");
+        } else {
+            intent.putExtra(EXTRA_MESSAGE, buffer.toString());
+            startActivity(intent);
+        }
     }
 }
